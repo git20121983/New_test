@@ -11,21 +11,82 @@
                 <title>{% block title %}{% endblock %} </title>
                 <meta name="description" content="">
                 <meta name="viewport" content="width=device-width, initial-scale=1">
+               
                 <link rel="stylesheet" href="{% static "css/blog.css" %}">
+                
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+                <link rel="stylesheet" href="{% static "css/paginate.css" %}">
+               
             </head>
             <body>
-                <div id="content">
-                    {% block content %}
+
+                <div class="container">
+                    <div class="row justify-content-md-center" >
+                      <div class="col-md-5">
+                        {% block content %}
+
+                    
                     {% endblock %}
-                </div>
-                <div id="sidebar">
-                    <h2>My blog</h2>
-                    <p>This is my blog.</p>
-                </div>
+                      </div>
+                      
+                      <div class="col-md-3 offset-md-4 ">
+                        
+                        
+                        <div id="sidebar">
+                        <h2>My blog</h2>
+                        <p>This is my blog.</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 md-7">
+                            {% block send_mail %}
+                            {% endblock %}
+                        </div>
+                  </div>
+         
+                
+                
                 <!--[if lt IE 7]>
                     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
                 <![endif]-->
                 
-                <script src="" async defer></script>
-            </body>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+                <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+                
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Функция для обработки AJAX-пагинации
+        function setupAjaxPagination() {
+            $('.paginate-wrapper a.page-link').on('click', function (e) {
+                e.preventDefault(); // Отменяем стандартное поведение ссылки
+                let pageUrl = $(this).attr('href'); // Получаем URL страницы
+                console.log(`Loading page: ${pageUrl}`);
+
+                // Отправляем AJAX-запрос
+                $.ajax({
+                    url: pageUrl,
+                    type: 'GET',
+                    success: function (data) {
+                        // Обновляем контейнер с данными
+                        $('#data-container').html($(data).find('#data-container').html());
+
+                        // Обновляем пагинацию
+                        $('.paginate-wrapper').html($(data).find('.paginate-wrapper').html());
+
+                        // Повторно настраиваем обработчики событий
+                        setupAjaxPagination();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(`AJAX Error: ${status} - ${error}`);
+                    }
+                });
+            });
+        }
+
+        // Инициализация при загрузке страницы
+        setupAjaxPagination();
+    });
+</script>  
+              </body>
         </html>
